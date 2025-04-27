@@ -1,0 +1,32 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Function to read files and return their contents
+def read_files(file_paths):
+    text_data = []
+    for file_path in file_paths:
+        with open(file_path, 'r') as file:
+            text_data.append(file.read())
+    return text_data
+
+# TF-IDF
+def tfidf(text_data):
+    # Create a TfidfVectorizer instance
+    vectorizer = TfidfVectorizer()
+    
+    # Fit and transform the text data
+    tfidf_matrix = vectorizer.fit_transform(text_data).toarray()
+    
+    # Get the feature names (vocabulary)
+    feature_names = vectorizer.get_feature_names_out()
+    
+    return tfidf_matrix, feature_names
+
+# Example usage
+technical_concept_files = ['technical_concept1.txt', 'technical_concept2.txt', 'technical_concept3.txt']
+technical_concepts = read_files(technical_concept_files)
+
+tfidf_matrix, feature_names = tfidf(technical_concepts)
+print("TF-IDF Matrix:")
+print(tfidf_matrix)
+print("Feature Names (Vocabulary):")
+print(feature_names)
