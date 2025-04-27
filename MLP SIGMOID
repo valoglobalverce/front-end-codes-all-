@@ -1,0 +1,74 @@
+import numpy as np
+
+np.random.seed(42)
+
+# Input size, hidden layers, output size
+input_size = 4
+hidden_size_1 = 3
+hidden_size_2 = 3
+output_size = 1
+
+# Initialize random weights and biases
+w1 = np.random.randn(input_size, hidden_size_1)
+b1 = np.random.randn(hidden_size_1)
+w2 = np.random.randn(hidden_size_1, hidden_size_2)
+b2 = np.random.randn(hidden_size_2)
+w3 = np.random.randn(hidden_size_2, output_size)
+b3 = np.random.randn(output_size)
+
+# Sigmoid activation function and its derivative
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
+# Training data
+X = np.array([[0, 0, 0, 0],
+              [0, 0, 1, 1],
+              [1, 1, 0, 0],
+              [1, 1, 1, 1]])
+Y = np.array([[0], [1], [1], [0]])
+
+# Learning rate
+lr = 0.1
+steps = 1000
+
+# Training loop
+for step in range(steps):
+    # Forward pass
+    hidden_input_1 = np.dot(X, w1) + b1
+    hidden_output_1 = sigmoid(hidden_input_1)
+    
+    hidden_input_2 = np.dot(hidden_output_1, w2) + b2
+    hidden_output_2 = sigmoid(hidden_input_2)
+    
+    final_input = np.dot(hidden_output_2, w3) + b3
+    final_output = sigmoid(final_input)
+    
+    # Error calculation
+    error = Y - final_output
+    
+    # Backpropagation
+    d_final_output = error * sigmoid_derivative(final_output)
+    d_hidden_layer_2 = d_final_output.dot(w3.T) * sigmoid_derivative(hidden_output_2)
+    d_hidden_layer_1 = d_hidden_layer_2.dot(w2.T) * sigmoid_derivative(hidden_output_1)
+    
+    # Update weights and biases
+    w3 += hidden_output_2.T.dot(d_final_output) * lr
+    b3 += np.sum(d_final_output, axis=0) * lr
+    
+    w2 += hidden_output_1.T.dot(d_hidden_layer_2) * lr
+    b2 += np.sum(d_hidden_layer_2, axis=0) * lr
+    
+    w1 += X.T.dot(d_hidden_layer_1) * lr
+    b1 += np.sum(d_hidden_layer_1, axis=0) * lr
+
+# Display final weights and biases
+print("MLP with Sigmoid Activation:")
+print("\nW1:", w1)
+print("\nBias b1:", b1)
+print("\nW2:", w2)
+print("\nBias b2:", b2)
+print("\nW3:", w3)
+print("\nBias b3:", b3)
