@@ -1,0 +1,60 @@
+import numpy as np
+
+input_size = 4
+hidden_size = 3
+output_size = 2
+
+np.random.seed(42)
+w1 = np.random.randn(input_size, hidden_size)
+b1 = np.random.randn(hidden_size)
+w2 = np.random.randn(hidden_size, output_size)
+b2 = np.random.randn(output_size)
+
+def sigmoid(X):
+    return 1 / (1 + np.exp(-X))
+
+def sigmoid_derivative(X):
+    return X * (1 - X)
+
+X = np.array([[0, 0, 0, 0],
+              [0, 0, 1, 1],
+              [1, 1, 0, 0],
+              [1, 1, 1, 1]])
+
+Y = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+
+lr = 0.1
+steps = 1000
+
+# Training loop
+for step in range(steps):
+    # Forward propagation
+    hidden_input = np.dot(X, w1) + b1
+    hidden_output = sigmoid(hidden_input)
+    
+    final_input = np.dot(hidden_output, w2) + b2
+    final_output = sigmoid(final_input)
+    
+    # Compute error
+    error = Y - final_output
+    
+    # Backpropagation
+    d_final_output = error * sigmoid_derivative(final_output)
+    d_hidden_layer = d_final_output.dot(w2.T) * sigmoid_derivative(hidden_output)
+    
+    # Update weights and biases
+    w2 += hidden_output.T.dot(d_final_output) * lr
+    b2 += np.sum(d_final_output, axis=0) * lr
+    w1 += X.T.dot(d_hidden_layer) * lr
+    b1 += np.sum(d_hidden_layer, axis=0) * lr
+
+print("Final Weights and Biases after training:")
+print("\nW1 (Input -> Hidden Layer):")
+print(w1)
+print("\nBias b1 (Hidden Layer):")
+print(b1)
+print("\nW2 (Hidden -> Output Layer):")
+print(w2)
+print("\nBias b2 (Output Layer):")
+print(b2)
+print("\nTotal training steps:", steps)
