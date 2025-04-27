@@ -1,0 +1,44 @@
+def fuzzy_union(A, B):
+    result = {}
+    for x in set(A.keys()).union(B.keys()):
+        result[x] = max(A.get(x, 0), B.get(x, 0))
+    return result
+
+def fuzzy_intersection(A, B):
+    result = {}
+    for x in set(A.keys()).intersection(B.keys()):
+        result[x] = min(A.get(x, 0), B.get(x, 0))
+    return result
+
+def fuzzy_complement(A):
+    result = {}
+    for x in A:
+        result[x] = 1 - A[x]
+    return result
+
+# Define fuzzy sets A and B
+A = {'a': 0.7, 'b': 0.2, 'c': 0.9}
+B = {'a': 0.5, 'b': 0.8, 'c': 0.4}
+
+print("Fuzzy Set A:", A)
+print("Fuzzy Set B:", B)
+
+# Union
+union_AB = fuzzy_union(A, B)
+print("\nUnion of A and B:", union_AB)
+
+# Complement of Union
+complement_union = fuzzy_complement(union_AB)
+print("\nComplement of (A Union B):", complement_union)
+
+# Complement of A
+complement_A = fuzzy_complement(A)
+print("\nComplement of A:", complement_A)
+
+# Complement of B
+complement_B = fuzzy_complement(B)
+print("Complement of B:", complement_B)
+
+# Intersection of complements (De Morgan's Law)
+intersection_complements = fuzzy_intersection(complement_A, complement_B)
+print("\n(Complement of A) Intersection (Complement of B):", intersection_complements)
