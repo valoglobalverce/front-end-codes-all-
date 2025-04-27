@@ -1,0 +1,66 @@
+import csv
+import heapq
+
+# Function to read graph from CSV
+def read_graph():
+    graph = {}
+    with open('graph.csv', 'r') as f:
+        reader = csv.reader(f)
+        next(reader)  # Skip header
+        for node, neighbor, weight in reader:
+            weight = int(weight)
+            if node not in graph:
+                graph[node] = []
+            graph[node].append((neighbor, weight))
+    return graph
+
+# Function to read heuristics from CSV
+def read_heuristics():
+    heuristics = {}
+    with open('heuristics.csv', 'r') as f:
+        reader = csv.reader(f)
+        next(reader)  # Skip header
+        for node, heuristic in reader:
+            heuristics[node] = int(heuristic)
+    return heuristics
+
+# A* Algorithm
+def a_star(graph, heuristics, start, goal):
+    open_list = []
+    heapq.heappush(open_list, (heuristics[start], start))  # Push start node
+    cost_from_start = {start: 0}  # Cost from start
+    best_path = {}  # To store the best path
+
+    while open_list:
+        current_f, current_node = heapq.heappop(open_list)  # Pop the node with smallest f
+        
+        if current_node == goal:
+            path = []
+            while current_node in best_path:
+                path.append(current_node)
+                current_node = best_path[current_node]
+            path.append(start)
+            path.reverse()
+            print("Path:", path)
+            return
+        
+        for neighbor, weight in graph.get(current_node, []):
+            new_cost = cost_from_start[current_node] + weight
+            if neighbor not in cost_from_start or new_cost < cost_from_start[neighbor]:
+                cost_from_start[neighbor] = new_cost
+                f_score = new_cost + heuristics[neighbor]
+                heapq.heappush(open_list, (f_score, neighbor))
+                best_path[neighbor] = current_node
+
+    print("Goal not reachable.")
+
+# Read graph and heuristics from CSV files
+graph = read_graph()
+heuristics = read_heuristics()
+
+# Start and goal nodes
+start_node = 'A'
+goal_node = 'F'
+
+# Call the A* algorithm
+a_star(graph, heuristics, start_node, goal_node)
