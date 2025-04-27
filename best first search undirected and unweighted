@@ -1,0 +1,43 @@
+import heapq
+
+graph = {}
+
+n = int(input("Enter number of edges: "))
+for _ in range(n):
+    u, v = input().split()
+    if u not in graph:
+        graph[u] = []
+    if v not in graph:
+        graph[v] = []
+    graph[u].append(v)
+    graph[v].append(u)
+
+heuristics = {}
+m = int(input("Enter number of nodes for heuristics: "))
+for _ in range(m):
+    node, h = input().split()
+    heuristics[node] = int(h)
+
+def best_first_search(graph, heuristics, start, goal):
+    visited = set()
+    priority_queue = []
+    heapq.heappush(priority_queue, (heuristics[start], start))
+
+    while priority_queue:
+        _, current_node = heapq.heappop(priority_queue)
+        print(f"Visiting: {current_node}")
+
+        if current_node == goal:
+            print("Goal reached!")
+            return
+
+        visited.add(current_node)
+
+        for neighbor in graph.get(current_node, []):
+            if neighbor not in visited:
+                heapq.heappush(priority_queue, (heuristics[neighbor], neighbor))
+
+start_node = input("Enter start node: ").strip()
+goal_node = input("Enter goal node: ").strip()
+
+best_first_search(graph, heuristics, start_node, goal_node)
