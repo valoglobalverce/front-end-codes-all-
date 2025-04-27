@@ -1,0 +1,21 @@
+def nim_computer_lose(stones):
+    while stones > 0:
+        if stones % 4 == 1:
+            move = 1
+        else:
+            move = min(3, stones)
+        print(f"Computer removes {move} stones.")
+        stones -= move
+        if stones == 0:
+            print("Computer wins!")
+            break
+
+        player_move = int(input(f"Stones left: {stones}. Your move (1-3): "))
+        stones -= player_move
+        if stones == 0:
+            print("You win!")
+            break
+
+# Start the game
+stones = 15
+nim_computer_lose(stones)
