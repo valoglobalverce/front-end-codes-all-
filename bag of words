@@ -1,0 +1,32 @@
+from sklearn.feature_extraction.text import CountVectorizer
+
+# Function to read files and return their contents
+def read_files(file_paths):
+    text_data = []
+    for file_path in file_paths:
+        with open(file_path, 'r') as file:
+            text_data.append(file.read())
+    return text_data
+
+# Bag of Words
+def bag_of_words(text_data):
+    # Create a CountVectorizer instance
+    vectorizer = CountVectorizer()
+    
+    # Fit and transform the text data
+    bow_matrix = vectorizer.fit_transform(text_data).toarray()
+    
+    # Get the feature names (vocabulary)
+    feature_names = vectorizer.get_feature_names_out()
+    
+    return bow_matrix, feature_names
+
+# Example usage
+tourist_place_files = ['tourist_place1.txt', 'tourist_place2.txt', 'tourist_place3.txt']
+tourist_places = read_files(tourist_place_files)
+
+bow_matrix, feature_names = bag_of_words(tourist_places)
+print("Bag of Words Matrix:")
+print(bow_matrix)
+print("Feature Names (Vocabulary):")
+print(feature_names)
