@@ -1,0 +1,84 @@
+import re
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+
+# Download necessary NLTK datasets
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+
+# Read the text file
+def read_file(file_path):
+    with open(file_path, 'r') as file:
+        text = file.read()
+    return text
+
+# Task 1: Text cleaning by removing punctuation/special characters, numbers, and extra whitespaces
+def clean_text(text):
+    # Remove punctuation, special characters, and numbers using regular expression
+    text = re.sub(r'[^A-Za-z\s]', '', text)
+    # Remove extra white spaces
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
+
+# Task 2: Convert text to lowercase
+def convert_to_lowercase(text):
+    return text.lower()
+
+# Task 3: Tokenization
+def tokenize(text):
+    return word_tokenize(text)
+
+# Task 4: Remove stop words
+def remove_stopwords(tokens):
+    stop_words = set(stopwords.words('english'))
+    return [word for word in tokens if word not in stop_words]
+
+# Task 5: Stemming (using Porter Stemmer)
+def stem_words(tokens):
+    stemmer = PorterStemmer()
+    return [stemmer.stem(word) for word in tokens]
+
+# Task 6: Lemmatization
+def lemmatize_words(tokens):
+    lemmatizer = WordNetLemmatizer()
+    return [lemmatizer.lemmatize(word) for word in tokens]
+
+# Task 7: Create a list of 3 consecutive words after lemmatization
+def get_consecutive_words(tokens):
+    consecutive_words = []
+    for i in range(len(tokens) - 2):
+        consecutive_words.append((tokens[i], tokens[i + 1], tokens[i + 2]))
+    return consecutive_words
+
+# Main program
+def process_text(file_path):
+    # Read the text from the file
+    text = read_file(file_path)
+    
+    # Perform text cleaning
+    cleaned_text = clean_text(text)
+    
+    # Convert text to lowercase
+    lowercase_text = convert_to_lowercase(cleaned_text)
+    
+    # Tokenization
+    tokens = tokenize(lowercase_text)
+    
+    # Remove stop words
+    tokens_no_stopwords = remove_stopwords(tokens)
+    
+    # Perform lemmatization
+    lemmatized_tokens = lemmatize_words(tokens_no_stopwords)
+    
+    # Create a list of 3 consecutive words
+    consecutive_words = get_consecutive_words(lemmatized_tokens)
+    
+    # Print the results
+    print(f"Lemmatized tokens: {lemmatized_tokens}")
+    print(f"Consecutive words (3 consecutive words): {consecutive_words}")
+
+# Example usage (replace 'yourfile.txt' with the actual file path)
+process_text('yourfile.txt')
