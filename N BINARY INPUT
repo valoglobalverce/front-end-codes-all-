@@ -1,0 +1,90 @@
+import numpy as np
+
+# Set random seed for reproducibility
+np.random.seed(42)
+
+# Number of inputs, hidden layers, and outputs
+input_size = 4    # Number of binary input features
+hidden_size_1 = 3 # Number of neurons in first hidden layer
+hidden_size_2 = 3 # Number of neurons in second hidden layer
+output_size = 1   # One output
+
+# Initialize random weights and biases
+w1 = np.random.randn(input_size, hidden_size_1)
+b1 = np.random.randn(hidden_size_1)
+w2 = np.random.randn(hidden_size_1, hidden_size_2)
+b2 = np.random.randn(hidden_size_2)
+w3 = np.random.randn(hidden_size_2, output_size)
+b3 = np.random.randn(output_size)
+
+# Sigmoid activation function
+def sigmoid(X):
+    return 1 / (1 + np.exp(-X))
+
+# Derivative of sigmoid function
+def sigmoid_derivative(X):
+    return X * (1 - X)
+
+# Training data (X) and labels (Y)
+X = np.array([[0, 0, 0, 0],
+              [0, 0, 1, 1],
+              [1, 1, 0, 0],
+              [1, 1, 1, 1]])
+
+Y = np.array([[0], [1], [1], [0]])
+
+# Learning rate
+lr = 0.1
+
+# Number of training steps
+steps = 1000
+
+# Training loop
+for step in range(steps):
+    # Forward propagation
+    hidden_input_1 = np.dot(X, w1) + b1
+    hidden_output_1 = sigmoid(hidden_input_1)
+    
+    hidden_input_2 = np.dot(hidden_output_1, w2) + b2
+    hidden_output_2 = sigmoid(hidden_input_2)
+    
+    final_input = np.dot(hidden_output_2, w3) + b3
+    final_output = sigmoid(final_input)
+    
+    # Calculate error
+    error = Y - final_output
+    
+    # Backpropagation
+    d_final_output = error * sigmoid_derivative(final_output)
+    d_hidden_layer_2 = d_final_output.dot(w3.T) * sigmoid_derivative(hidden_output_2)
+    d_hidden_layer_1 = d_hidden_layer_2.dot(w2.T) * sigmoid_derivative(hidden_output_1)
+    
+    # Update weights and biases
+    w3 += hidden_output_2.T.dot(d_final_output) * lr
+    b3 += np.sum(d_final_output, axis=0) * lr
+    
+    w2 += hidden_output_1.T.dot(d_hidden_layer_2) * lr
+    b2 += np.sum(d_hidden_layer_2, axis=0) * lr
+    
+    w1 += X.T.dot(d_hidden_layer_1) * lr
+    b1 += np.sum(d_hidden_layer_1, axis=0) * lr
+
+# Display final weights, biases, and number of steps
+print("Final Weights and Biases after training:")
+
+print("\nW1 (Input -> Hidden Layer 1):")
+print(w1)
+print("\nBias b1 (Hidden Layer 1):")
+print(b1)
+
+print("\nW2 (Hidden Layer 1 -> Hidden Layer 2):")
+print(w2)
+print("\nBias b2 (Hidden Layer 2):")
+print(b2)
+
+print("\nW3 (Hidden Layer 2 -> Output Layer):")
+print(w3)
+print("\nBias b3 (Output Layer):")
+print(b3)
+
+print("\nTotal training steps:", steps)
